@@ -1,37 +1,39 @@
-import colors from "colors";
+import EventEmitter from "events";
 
-const consoleResult = process.argv[2];
-let result;
-const check = (a) => {
-  const range = a.split(".");
-  let arr = [];
-  if (range.length !== 2) return "Неверно указан диапазон";
-  if (Number(range[0]) > Number(range[1]))
-    return "Первое число не может быть больше второго";
-  for (let i = range[0]; i <= range[1] - range[0] + 2; i++)
-    if (isPrime(i)) arr.push(Number(i));
+const [hour, day, month, year] = process.argv[2].split("-");
+const dateCustom = new Date(Date.UTC(year, month - 1, day, hour));
+const emiter = new EventEmitter();
 
-  if (arr.length == 0) return "Значения диапазона не числа";
-  return arr;
-};
-
-const isPrime = (num) => {
-  if (num < 2) return false;
-  for (let i = 2; i < num; i++) {
-    if (num % i == 0) return false;
-  }
-  return true;
-};
-
-result = check(consoleResult);
-
-for (let i = 0; i < result.length; i++) {
-  const elem = result[i];
-  if (i % 3 == 0) {
-    console.log(colors.green(elem));
-  } else if (i % 3 == 1) {
-    console.log(colors.yellow(elem));
+const timeShow = (date) => {
+  const dateNow = new Date();
+  if (dateNow >= date) {
+    emiter.emit("timerEnd");
   } else {
-    console.log(colors.red(elem));
+    console.clear();
+    console.log(getPrettyTime((dateCustom - dateNow) / 1000) + " left");
   }
-}
+};
+
+const getPrettyTime = (seconds) => {
+  const arr = [
+    Math.floor(seconds % 60),
+    Math.floor((seconds / 60) % 60),
+    Math.floor((seconds / (60 * 60)) % 24),
+    Math.floor(seconds / (60 * 60 * 24)),
+  ];
+  return `${arr.pop()} days ${arr.pop()} hours ${arr.pop()} minutes ${arr.pop()} seconds`;
+};
+
+const showTimerDone = (timerID) => {
+  clearInterval(timerID);
+  console.log("Time is up");
+};
+
+const timerId = setInterval(() => {
+  emiter.emit("timerTick", dateCustom);
+});
+
+emiter.on("timerEnd", () => {
+  showTimerDone(timerId);
+});
+emiter.on("timerTick", timeShow);
