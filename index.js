@@ -2,7 +2,6 @@ import colors from "colors";
 
 const consoleResult = process.argv[2];
 let result;
-
 const check = (a) => {
   const range = a.split(".");
   let arr = [];
