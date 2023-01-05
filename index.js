@@ -1,39 +1,21 @@
-import EventEmitter from "events";
+import fs from "fs";
+import { Transform } from "stream";
 
-const [hour, day, month, year] = process.argv[2].split("-");
-const dateCustom = new Date(Date.UTC(year, month - 1, day, hour));
-const emiter = new EventEmitter();
+import * as readline from "readline";
 
-const timeShow = (date) => {
-  const dateNow = new Date();
-  if (dateNow >= date) {
-    emiter.emit("timerEnd");
-  } else {
-    console.clear();
-    console.log(getPrettyTime((dateCustom - dateNow) / 1000) + " left");
+const file = readline.createInterface({
+  input: fs.createReadStream("access_tmp.log.txt"),
+  output: process.stdout,
+  terminal: false,
+});
+
+file.on("line", (line) => {
+  if (line == "") return false;
+  const id = line.slice(0, line.indexOf("-") - 1);
+  const writeStream = fs.createWriteStream("./%ip-адрес%_requests.log", {
+    flags: "a",
+  });
+  if (id == "89.123.1.41" || id == "34.48.240.111") {
+    writeStream.write(`${line}\n`);
   }
-};
-
-const getPrettyTime = (seconds) => {
-  const arr = [
-    Math.floor(seconds % 60),
-    Math.floor((seconds / 60) % 60),
-    Math.floor((seconds / (60 * 60)) % 24),
-    Math.floor(seconds / (60 * 60 * 24)),
-  ];
-  return `${arr.pop()} days ${arr.pop()} hours ${arr.pop()} minutes ${arr.pop()} seconds`;
-};
-
-const showTimerDone = (timerID) => {
-  clearInterval(timerID);
-  console.log("Time is up");
-};
-
-const timerId = setInterval(() => {
-  emiter.emit("timerTick", dateCustom);
 });
-
-emiter.on("timerEnd", () => {
-  showTimerDone(timerId);
-});
-emiter.on("timerTick", timeShow);
