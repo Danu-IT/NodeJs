@@ -1,52 +1,59 @@
+// CLI - консольное приложение
 import fs from "fs";
-import { Transform } from "stream";
-//1. const data = fs.readFileSync("./access.log", { encoding: "utf-8" }); синхронное чтение
-//2. fs.readFile("./access.log", { encoding: "utf-8" }, (err, data) => { асинхронное чтенике
+import path from "path";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+import * as readline from "readline";
+//1. const fileName = process.argv[2];
+// const __dirname = "/Портфолио/NodeJs";
+
+// fs.readFile(path.join(__dirname, fileName), "utf-8", (err, data) => {
 //   console.log(data);
 // });
 
-// const data = `213.180.195.231 - - [29/Jan/2007:00:07:17 +0000] "GET /excel/lsn015.html HTTP/1.1" 200 18918 "-" "YaDirectBot/1.0"\n`;
-//4. fs.writeFileSync("./access.log", data, { flag: "a" }); синхронная запись
-//5. fs.writeFile("./access.log", data, { flag: "a" }, console.error); асинхронная запись
+//2. const __dirname = "/Портфолио/NodeJs";
 
-// Стриминг (Событийная модель)
+// const options = yargs(hideBin(process.argv))
+//   .usage("Usage: -p <path>")
+//   .option("p", {
+//     alias: "path",
+//     describe: "Path to file",
+//     demandOption: true,
+//   }).argv;
 
-//6. const readStream = fs.createReadStream("./access.log", {
-//   encoding: "utf8",
-//   start: 0,
-//   end: 10,
-//   //highWaterMark - размер чанков
-// });
-// readStream.on("data", (chunk) => {
-//   console.log(chunk);
-// });
+// const fileName = options.path;
 
-// readStream.on("end", () => console.log("Finished reading"));
-// readStream.on("error", (err) => console.error(err.message));
-
-// const data = `213.180.195.231 - - [29/Jan/2007:00:07:17 +0000] "GET /excel/lsn015.html HTTP/1.1" 200 18918 "-" "YaDirectBot/1.0"\n`;
-
-//7. const writeStream = fs.createWriteStream("./access.log", { flags: "a" });
-
-// writeStream.write(data);
-// writeStream.end(() => console.log("File writing is finished"));
-
-//8. const readStream = new fs.ReadStream("./access.log");
-
-// const transformStream = new Transform({
-//   transform(chunk, encoding, callback) {
-//     const editedChunk = chunk
-//       .toString()
-//       .replace(/((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}/g, "*.*.*.*");
-
-//     this.push(editedChunk);
-
-//     callback(editedChunk);
-//   },
+// fs.readFile(path.join(__dirname, fileName), "utf-8", (err, data) => {
+//   console.log(data);
 // });
 
-// const writeStream = fs.createWriteStream("./access-ip-protected.log", {
-//   flags: "a",
+// console.log(options);
+
+//3. const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
 // });
 
-// readStream.pipe(transformStream).pipe(writeStream);
+// rl.question("Please enter the path to the file: ", (inPath) => {
+//   console.log(inPath);
+//   rl.close();
+// });
+
+// rl.on("close", () => process.exit(0));
+
+//4. const fileName = process.argv[2];
+// const __dirname = "/Портфолио/NodeJs";
+
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
+
+// rl.question("Please enter the path to the file: ", (fileName) => {
+//   fs.readFile(path.join(__dirname, fileName), "utf-8", (err, data) => {
+//     console.log(data);
+//     rl.close();
+//   });
+// });
+
+// rl.on("close", () => process.exit(0));
